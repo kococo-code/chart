@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "declarationDir": "lib",
+    "outDir": "lib",
+    "rootDir": "src"
+  },
+  "exclude": ["lib", "test"],
+  "extends": "tsconfig/react-library.json",
+  "include": ["src/**/*", "types/**/*", "../../types/**/*"]
+}
