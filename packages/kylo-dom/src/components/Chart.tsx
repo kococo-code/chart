@@ -6,7 +6,7 @@ export const Chart = forwardRef(
     ref: ForwardedRef<SVGSVGElement>
   ) => {
     return (
-      <svg ref={ref} className={twMerge("kylo-chart", className)} {...rest}>
+      <svg ref={ref} className={twMerge("", className)} {...rest}>
         {children}
       </svg>
     );

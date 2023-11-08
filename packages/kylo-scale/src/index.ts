@@ -1,1 +1,0 @@
-export { scaleLinear } from "./scales";

@@ -2,16 +2,25 @@ import { useEffect, useRef, useState } from "react";
 
 export function useResponsive<T extends HTMLElement>() {
   const domRef = useRef<T>(null);
-  const [width, setWidth] = useState<number>(0);
-  const [height, setHeight] = useState<number>(0);
-
-  function setResponsiveSize() {
-    if (domRef.current) {
-      const element = domRef.current;
-      const { width, height } = element.getBoundingClientRect();
-      setWidth(width);
-      setHeight(height);
-    }
+  const [size, setSize] = useState<
+    { width: number; height: number } | undefined
+  >({
+    width: 0,
+    height: 0,
+  });
+  function setResponsiveSize(entries: ResizeObserverEntry[]) {
+    const entry = entries[0];
+    const { width: newWidth, height: newHeight } = entry.contentRect;
+    console.log(size, newWidth, newHeight, size);
+    setSize((size) => {
+      if (size?.width !== newWidth || size?.height !== newHeight) {
+        return {
+          width: newWidth,
+          height: newHeight,
+        };
+      }
+      return size;
+    });
   }
 
   useEffect(() => {
@@ -23,11 +32,10 @@ export function useResponsive<T extends HTMLElement>() {
         resizeObserver.disconnect();
       };
     }
-  }, [domRef.current]);
+  }, [domRef, domRef.current]);
 
   return {
     domRef,
-    width,
-    height,
+    size,
   };
 }

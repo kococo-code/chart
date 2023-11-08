@@ -16,12 +16,15 @@
   "dependencies": {
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@visx/tooltip": "^3.3.0",
     "clsx": "^2.0.0",
+    "postcss": "^8.4.31",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^1.14.0"
   },
   "devDependencies": {
+    "tailwind-config": "workspace:*",
     "tsconfig": "workspace:*"
   }
 }
