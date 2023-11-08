@@ -7,6 +7,7 @@ import {
 } from "@kylo/dom";
 import { useChartVariables, useTimeSeriesData } from "@kylo/dom/src/hooks";
 import * as Scale from "@visx/scale";
+import { Grid } from "@visx/grid";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Bar } from "@visx/shape";
 import { useTooltip, useTooltipInPortal } from "@visx/tooltip";
@@ -76,6 +77,17 @@ export default function Barchart() {
               return `$${v}`;
             }}
           ></AxisLeft>
+          <Grid
+            top={0}
+            left={DEFAULT_CHART_MARGIN.left}
+            xScale={xScale}
+            yScale={yScale}
+            width={range.x.max - range.x.min}
+            height={1}
+            stroke="black"
+            strokeOpacity={0.1}
+            xOffset={xScale.bandwidth() / 2}
+          ></Grid>
           {data.map((point, index) => {
             const barWidth = xScale.bandwidth();
             const barHeight = range.y.max - yScale(point.y) - 2 || 0;
@@ -106,6 +118,7 @@ export default function Barchart() {
             );
           })}
           <DashedLine
+            className="border-black"
             x={range?.x.min || 0}
             y={(range?.y.max - range.y.min) / 2}
             width={range?.x.max - range?.x.min}
