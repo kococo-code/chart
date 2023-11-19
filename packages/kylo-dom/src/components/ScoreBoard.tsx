@@ -7,7 +7,7 @@ export function ScoreBoard({ className, children, ...rest }: ScoreBoardProps) {
   return (
     <div
       className={twMerge(
-        "w-full h-full font-semibold text-center flex flex-col gap-1 border rounded",
+        "w-fit h-fit font-semibold text-center flex flex-col gap-1 border rounded",
         className
       )}
       {...rest}

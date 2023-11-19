@@ -4,12 +4,6 @@ export interface Margin {
   top?: number;
   bottom?: number;
 }
-export const DEFAULT_CHART_MARGIN: Margin = {
-  top: 20,
-  bottom: 40,
-  right: 40,
-  left: 30,
-};
 
 export interface DomRange {
   max: number;

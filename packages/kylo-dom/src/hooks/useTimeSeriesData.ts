@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { DefaultInputType, TimeSeriesDomain } from "../types";
 
-interface UseTimeSeriesDataProps<T extends Record<string, DefaultInputType>> {
+interface UseTimeSeriesDataProps<T extends { [K in keyof T]: T[K] }> {
   data: T[];
   key: {
     x: string;
@@ -11,9 +11,11 @@ interface UseTimeSeriesDataProps<T extends Record<string, DefaultInputType>> {
     isCategoricalData?: boolean;
   };
 }
-export default function useTimeSeriesData<
-  T extends Record<string, DefaultInputType>,
->({ data, key, options }: UseTimeSeriesDataProps<T>) {
+export default function useTimeSeriesData<T extends { [K in keyof T]: T[K] }>({
+  data,
+  key,
+  options,
+}: UseTimeSeriesDataProps<T>) {
   const [domain, setDomain] = useState<TimeSeriesDomain>({
     x: [],
     y: [],
@@ -34,22 +36,28 @@ export default function useTimeSeriesData<
       return getContinousDomain();
     }
   }
-  function getContinousDomain() {
+  function getTimeSeriesData() {
     const timeSeriesKey = key.x;
-    const timeSeriesData = data
-      .map((data) => {
-        if (data.hasOwnProperty(timeSeriesKey)) {
-          return data[timeSeriesKey] as string;
+    const identityDate = new Set<string>();
+    data.forEach((data) => {
+      if (data.hasOwnProperty(timeSeriesKey)) {
+        const date = data[timeSeriesKey as keyof T] as string;
+        if (!identityDate.has(date)) {
+          identityDate.add(date);
         }
-        return "";
-      })
-      .filter((val) => val !== "");
+      }
+    });
+    const timeSeriesData = [...identityDate];
+    return timeSeriesData;
+  }
+  function getContinousDomain() {
+    const timeSeriesData = getTimeSeriesData();
     const sortedTimeSeries = getSortedTimeseries(timeSeriesData);
     const continousKey = key.y;
     const continousData = data
       .map((data) => {
         if (data.hasOwnProperty(continousKey)) {
-          return data[continousKey] as number;
+          return data[continousKey as keyof T] as number;
         }
         return Infinity;
       })
@@ -62,21 +70,13 @@ export default function useTimeSeriesData<
     };
   }
   function getCategoricalDomain() {
-    const timeSeriesKey = key.y;
-    const timeSeriesData = data
-      .map((data) => {
-        if (data.hasOwnProperty(timeSeriesKey)) {
-          return data[timeSeriesKey] as string;
-        }
-        return "";
-      })
-      .filter((val) => val !== "");
+    const timeSeriesData = getTimeSeriesData();
     const sortedTimeSeries = getSortedTimeseries(timeSeriesData);
     const categoricalKey = key.x;
     const categoricalData = data
       .map((data) => {
         if (data.hasOwnProperty(categoricalKey)) {
-          return data[categoricalKey] as string;
+          return data[categoricalKey as keyof T] as string;
         }
         return "";
       })
@@ -94,8 +94,10 @@ export default function useTimeSeriesData<
     };
   }
   useEffect(() => {
-    const domain = getTimeSeriesDomain();
-    setDomain(domain);
+    if (data && data.length > 0) {
+      const domain = getTimeSeriesDomain();
+      setDomain(domain);
+    }
   }, [data]);
   return {
     domain,

@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 
 export default function _ScoreBoard() {
   return (
-    <Container className="flex flex-col gap-4 w-fit">
+    <Container className="flex gap-4 h-fit">
       <Container.Title>SKU Counts</Container.Title>
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <ScoreBoard className="p-4">
           <ScoreBoard.Score status="negative" fontSize="2xl">
             120

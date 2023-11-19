@@ -9,7 +9,7 @@ export function Container({
   return (
     <div
       className={twMerge(
-        "p-4 border rounded shadow-lg h-[350px] w-[600px]",
+        "border rounded shadow-lg p-4 h-[350px] w-full",
         className
       )}
       {...rest}

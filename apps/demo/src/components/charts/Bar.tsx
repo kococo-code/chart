@@ -12,25 +12,26 @@ import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Bar } from "@visx/shape";
 import { useTooltip, useTooltipInPortal } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
-const points = [
-  { x: "2022-01-01", y: 8 },
-  { x: "2022-01-02", y: 1 },
-];
+import { generateSequentialStockData, Stock } from "@kylo/test";
+import { useMemo } from "react";
 export default function Barchart() {
   const { domRef, size } = useResponsive<HTMLDivElement>();
   const { containerRef, TooltipInPortal } = useTooltipInPortal({
     scroll: true,
   });
+  const stock = useMemo(() => {
+    return generateSequentialStockData(["AAPL"], 30, "2022-01-01");
+  }, []);
   const { axis, range } = useChartVariables({
     width: size?.width,
     height: size?.height,
     margin: DEFAULT_CHART_MARGIN,
   });
-  const { domain, data } = useTimeSeriesData<{ x: string; y: number }>({
-    data: points,
+  const { domain, data } = useTimeSeriesData<Stock>({
+    data: stock[0],
     key: {
-      x: "x",
-      y: "y",
+      x: "Date",
+      y: "Open",
     },
   });
   const xScale = Scale.scaleBand({
@@ -44,7 +45,6 @@ export default function Barchart() {
     round: true,
     range: [range.y.max, range.y.min],
   });
-
   const colorScale = Scale.scaleOrdinal({
     domain: domain.x,
     range: ["#6c5efb", "#a44afe"],
@@ -60,13 +60,14 @@ export default function Barchart() {
 
   return (
     <Container>
-      <Container.Title>Balance</Container.Title>
+      <Container.Title>AAPL Bar</Container.Title>
       <Container.ChartWrapper ref={domRef}>
         <Chart width={size?.width} height={size?.height} ref={containerRef}>
           <AxisBottom
             scale={xScale}
             top={axis.bottom.top}
             left={axis.bottom.left}
+            numTicks={5}
           ></AxisBottom>
           <AxisLeft
             scale={yScale}
@@ -88,10 +89,10 @@ export default function Barchart() {
             strokeOpacity={0.1}
             xOffset={xScale.bandwidth() / 2}
           ></Grid>
-          {data.map((point, index) => {
+          {data.map((stock, index) => {
             const barWidth = xScale.bandwidth();
-            const barHeight = range.y.max - yScale(point.y) - 2 || 0;
-            const barX = xScale(point.x.toString()) || 0;
+            const barHeight = range.y.max - yScale(stock.Open) - 2 || 0;
+            const barX = xScale(stock.Date) || 0;
             const barY = range.y.max - barHeight - 2;
             return (
               <Bar
@@ -99,10 +100,10 @@ export default function Barchart() {
                 x={barX}
                 y={barY}
                 width={barWidth}
-                height={barHeight}
-                fill={colorScale(point.x)}
+                height={barHeight > 0 ? barHeight : 0}
+                fill={colorScale(domain.x[0])}
                 stroke="1"
-                rx="5"
+                rx="2"
                 onMouseLeave={(event) => {
                   hideTooltip();
                 }}
@@ -111,7 +112,7 @@ export default function Barchart() {
                   showTooltip({
                     tooltipTop: barY,
                     tooltipLeft: eventSvgCoords?.x || 0,
-                    tooltipData: `${point.x}, ${point.y}`,
+                    tooltipData: `${JSON.stringify(stock)}`,
                   });
                 }}
               ></Bar>

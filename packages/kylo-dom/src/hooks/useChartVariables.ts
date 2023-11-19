@@ -34,7 +34,10 @@ export default function useRangeVariables({
     x: { max: 0, min: 0 },
     y: { max: 0, min: 0 },
   });
-
+  const [bounds, setBounds] = useState<{ width: number; height: number }>({
+    width: 0,
+    height: 0,
+  });
   function getAxisLocation(width: number, height: number, margin?: Margin) {
     const marginLeft = margin?.left || 0;
     const marginTop = margin?.top || 0;
@@ -68,22 +71,36 @@ export default function useRangeVariables({
     return {
       x: {
         min: marginLeft,
-        max: width - marginRight,
+        max: width - marginRight + marginLeft,
       },
       y: { min: marginTop, max: height - marginBottom },
+    };
+  }
+  function getBounds(width: number, height: number, margin?: Margin) {
+    const marginLeft = margin?.left || 0;
+    const marginTop = margin?.top || 0;
+    const marginRight = margin?.right || 0;
+    const marginBottom = margin?.bottom || 0;
+    return {
+      width: width - marginLeft - marginRight,
+      height: height - marginTop - marginBottom,
     };
   }
   useEffect(() => {
     if (width && height) {
       const axis = getAxisLocation(width, height, margin);
       const range = getRange(width, height, margin);
+      const bounds = getBounds(width, height, margin);
       setAxis(axis);
       setRange(range);
+      setBounds(bounds);
     }
   }, [width, height, margin]);
 
   return {
     axis,
     range,
+    bounds: bounds,
+    margin,
   };
 }

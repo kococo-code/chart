@@ -11,8 +11,9 @@
   },
   "dependencies": {
     "@kylo/dom": "workspace:*",
-    "@radix-ui/themes": "^2.0.0",
+    "@kylo/test": "workspace:*",
     "@visx/axis": "^3.4.1",
+    "@visx/curve": "^3.3.0",
     "@visx/event": "^3.3.0",
     "@visx/gradient": "^3.3.0",
     "@visx/grid": "^3.3.0",
